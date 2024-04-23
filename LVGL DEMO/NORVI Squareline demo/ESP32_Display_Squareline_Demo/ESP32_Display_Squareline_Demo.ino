@@ -1,10 +1,7 @@
-#include <Wire.h>
+ #include <Wire.h>
 #include <SPI.h>
 
 #define USE_UI    //if you want to use the ui export from Squareline, please do not annotate this line.
-
-#define SDA 19
-#define SCL 20
 
 #if defined USE_UI
 #include <lvgl.h>
@@ -17,55 +14,10 @@
 
 /******Please define a corresponding line based on your development board.************/
 #define Display_50
-#define PCA9538_ADDR 0x73
-#define PCA9538_INPUT_REG 0x00
-#define PCA9538_OUTPUT_REG 0x01
-#define PCA9538_POLARITY_REG 0x02
-#define PCA9538_CONFIG_REG 0x03
-
-#define GPIO5 0x10
-#define GPIO6 0x20
-#define GPIO7 0x40
-#define GPIO8 0x80
 /*******************************************************************************
  * Screen Driver Configuration 
 *******************************************************************************/
-void setPinMode(uint8_t pin, uint8_t mode) {
-  uint8_t config = readRegister(PCA9538_CONFIG_REG);
-  if (mode == INPUT) {
-    config |= pin;
-  } else {
-    config &= ~pin;
-  }
-  writeRegister(PCA9538_CONFIG_REG, config);
-}
 
-void writeOutput(uint8_t pin, uint8_t value) {
-  uint8_t output = readRegister(PCA9538_OUTPUT_REG);
-  if (value == LOW) {
-    output &= ~pin;
-  } else {
-    output |= pin;
-  }
-  writeRegister(PCA9538_OUTPUT_REG, output);
-}
-uint8_t readInput() {
-  return readRegister(PCA9538_INPUT_REG);
-}
-
-uint8_t readRegister(uint8_t reg) {
-  Wire.beginTransmission(PCA9538_ADDR);
-  Wire.write(reg);
-  Wire.endTransmission(false);
-  Wire.requestFrom(PCA9538_ADDR, 1);
-  return Wire.read();
-}
-void writeRegister(uint8_t reg, uint8_t value) {
-  Wire.beginTransmission(PCA9538_ADDR);
-  Wire.write(reg);
-  Wire.write(value);
-  Wire.endTransmission();
-}
 Arduino_ESP32RGBPanel *bus = new Arduino_ESP32RGBPanel(
     GFX_NOT_DEFINED /* CS */, GFX_NOT_DEFINED /* SCK */, GFX_NOT_DEFINED /* SDA */,
     4 /* DE */, 5 /* VSYNC */, 6 /* HSYNC */, 7 /* PCLK */,
@@ -144,27 +96,6 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
   delay(15);
 }
 #endif
-
-void button_on(lv_event_t * e)
-{
-  writeOutput(GPIO5, 1);
-  writeOutput(GPIO6, 1);
-  writeOutput(GPIO7, 1);
-  writeOutput(GPIO8, 1);
-  Serial.println( "on" );
-
-}
-
-void button_off(lv_event_t * e)
-{
-  writeOutput(GPIO5, 0);
-  writeOutput(GPIO6, 0);
-  writeOutput(GPIO7, 0);
-  writeOutput(GPIO8, 0);
-  Serial.println( "off" );
-
-  delay(300);
-}
 
 void setup()
 {
@@ -245,13 +176,6 @@ void setup()
   delay(800);
 #endif
   Serial.println( "Setup done" );
-
-  Wire.begin(SDA, SCL);
-  setPinMode(GPIO5, OUTPUT);
-  setPinMode(GPIO6, OUTPUT);
-  setPinMode(GPIO7, OUTPUT);
-  setPinMode(GPIO8, OUTPUT);
-  
 }
 
 void loop()

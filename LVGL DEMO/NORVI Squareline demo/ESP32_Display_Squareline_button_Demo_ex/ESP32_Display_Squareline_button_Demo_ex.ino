@@ -169,8 +169,9 @@ void button_off(lv_event_t * e)
 void setup()
 {
   Serial.begin(9600);
+ // delay(100);
   Serial.println("LVGL Widgets Demo");
-
+  
 #if defined(Display_50) || defined(Display_70)
   //IO Port Pins
   pinMode(38, OUTPUT);
@@ -192,12 +193,13 @@ void setup()
   digitalWrite(38, LOW);
   pinMode(0, OUTPUT);//TOUCH-CS
 #endif
-
+  //delay(1000);
   // Init Display
   lcd->begin();
+  //delay(300);
   lcd->fillScreen(BLACK);
   lcd->setTextSize(2);
-  delay(200);
+ // delay(2000);
   
 #ifdef USE_UI
   lv_init();
